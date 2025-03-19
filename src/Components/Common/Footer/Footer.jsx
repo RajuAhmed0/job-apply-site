@@ -3,10 +3,10 @@ import { FaFacebook, FaYoutube, FaLinkedin, FaTiktok } from "react-icons/fa";
 
 const Footer = () => {
     return (
-        <footer className="bg-orange-50  py-10 px-5 md:px-20">
-            <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+        <footer className="bg-orange-50  py-10 px-5 ">
+            <div className="container max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <h2 className="text-2xl font-bold">Job Nest</h2>
+                    <h2 className="text-2xl font-bold text-orange-400">Job Nest</h2>
                     <p className="mt-2 text-sm">
                         Job Nest jobs aims to be the largest professional networking and job matching platform for the rising force in Bangladesh.
                     </p>
@@ -17,7 +17,7 @@ const Footer = () => {
                 </div>
 
                 <div>
-                    <h3 className="font-semibold">Company</h3>
+                    <h3 className="font-semibold text-orange-400">Company</h3>
                     <ul className="mt-2 space-y-1 text-sm">
                         <li>About Us</li>
                         <li>Impactful Insights</li>
@@ -27,7 +27,7 @@ const Footer = () => {
                 </div>
 
                 <div>
-                    <h3 className="font-semibold">Services</h3>
+                    <h3 className="font-semibold text-orange-400">Services</h3>
                     <ul className="mt-2 space-y-1 text-sm">
                         <li>Job Posting (Subscription Plans)</li>
                         <li>Recruitment Process Outsourcing / Headhunting</li>
@@ -37,7 +37,7 @@ const Footer = () => {
                 </div>
 
                 <div>
-                    <h3 className="font-semibold">Get In Touch</h3>
+                    <h3 className="font-semibold text-orange-400">Get In Touch</h3>
                     <ul className="mt-2 space-y-1 text-sm">
                         <li className="flex items-center"><FaPhoneAlt className="mr-2" /> +880 9638-885588</li>
                         <li className="flex items-center"><FaEnvelope className="mr-2" /> info@Job Nest.com</li>
@@ -53,7 +53,7 @@ const Footer = () => {
                 </div>
             </div>
 
-            <div className="mt-10 border-t border-gray-700 pt-4 text-center  text-xs text-gray-500">
+            <div className=" mt-10 border-t border-gray-700 pt-4 text-center  text-xs text-gray-500">
             
                 <span>Copyright © 2024 All Rights Reserved by Job Nest</span>
         
