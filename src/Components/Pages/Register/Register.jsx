@@ -8,7 +8,7 @@ const Register = () => {
     return (
         <div>
             <div className="flex items-center justify-center bg-gray-100 ">
-                <div className="bg-white p-6  ">
+                <div className="bg-white p-6 my-12 max-w-lg ">
                     <h2 className="text-3xl font-bold text-orange-500 text-center">Register</h2>
                     <p className="text-gray-600 text-center mb-8 mt-4">
                         Discover the latest in job with Job Nest. Your go-to source for insights, trends, and internships.
