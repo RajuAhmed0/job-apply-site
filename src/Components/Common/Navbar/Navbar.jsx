@@ -1,13 +1,26 @@
-import { useState } from "react";
-import { FaUnlock, FaUser, FaBars, FaTimes, FaPlus } from "react-icons/fa";
+import { useContext, useState } from "react";
+import { FaUnlock, FaUser, FaBars, FaTimes, FaPlus, FaSignOutAlt } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
+import { AuthContext } from "../../Provider/AuthProvider";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const { user, logOut } = useContext(AuthContext)
+    console.log(user);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+
+
+    const handleLogOut = () => {
+        logOut()
+            .then(() => {
+                // Sign-out successful.
+            }).catch((error) => {
+                // An error happened.
+            });
+    }
 
     return (
         <div>
@@ -25,14 +38,25 @@ const Navbar = () => {
                         {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
                     </button>
 
-                    {/* Right Side Icons */}
+                    {/* Right Side - User Info or Login/Signup */}
                     <div className="hidden md:flex items-center space-x-4">
-                        <Link to="/login" className="flex items-center text-gray-700 hover:text-orange-600">
-                            <FaUser className="mr-1" /> Login
-                        </Link>
-                        <Link to="/register" className="flex items-center text-gray-700 hover:text-orange-600">
-                            <FaUnlock className="mr-1" /> Signup
-                        </Link>
+                        {user ? (
+                            <div className="flex items-center space-x-4">
+                                <img src={user.photoURL} alt="User" className="w-10 h-10 rounded-full" />
+                                <button onClick={handleLogOut} className="flex items-center text-gray-700 hover:text-orange-600">
+                                    <FaSignOutAlt className="mr-1" /> Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <Link to="/login" className="flex items-center text-gray-700 hover:text-orange-600">
+                                    <FaUser className="mr-1" /> Login
+                                </Link>
+                                <Link to="/register" className="flex items-center text-gray-700 hover:text-orange-600">
+                                    <FaUnlock className="mr-1" /> Signup
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </div>
             </nav>
@@ -59,10 +83,12 @@ const Navbar = () => {
                             </NavLink>
                         ))}
                     </div>
-                    
-                    <NavLink to="/post-job" className="bg-orange-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-orange-600 hidden md:flex">
-                        <FaPlus /> Post New Job
-                    </NavLink>
+
+                    <div className="md:block hidden">
+                        <NavLink to="/post-job" className="bg-orange-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-orange-600  md:flex">
+                            <FaPlus /> Post New Job
+                        </NavLink>
+                    </div>
                 </div>
             </nav>
 
@@ -70,7 +96,7 @@ const Navbar = () => {
             {isOpen && (
                 <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50" onClick={toggleMenu}></div>
             )}
-            <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-md transform ${isOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 z-50 p-5`}> 
+            <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-md transform ${isOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 z-50 p-5`}>
                 <button className="absolute top-4 right-4 text-gray-700" onClick={toggleMenu}>
                     <FaTimes size={24} />
                 </button>
@@ -92,14 +118,24 @@ const Navbar = () => {
                             {link.label}
                         </NavLink>
                     ))}
-                    
-                    {/* Login, Signup, and Post Job in Sidebar */}
-                    <Link to="/login" className="flex items-center text-gray-700 hover:text-orange-600" onClick={toggleMenu}>
-                        <FaUser className="mr-2" /> Login
-                    </Link>
-                    <Link to="/register" className="flex items-center text-gray-700 hover:text-orange-600" onClick={toggleMenu}>
-                        <FaUnlock className="mr-2" /> Signup
-                    </Link>
+
+                    {user ? (
+                        <>
+                            <img src={user.photoURL} alt="User" className="w-10 h-10 rounded-full mx-auto" />
+                            <button onClick={handleLogOut} className="flex items-center text-gray-700 hover:text-orange-600 justify-center mt-4">
+                                <FaSignOutAlt className="mr-2" /> Logout
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login" className="flex items-center text-gray-700 hover:text-orange-600" onClick={toggleMenu}>
+                                <FaUser className="mr-2" /> Login
+                            </Link>
+                            <Link to="/register" className="flex items-center text-gray-700 hover:text-orange-600" onClick={toggleMenu}>
+                                <FaUnlock className="mr-2" /> Signup
+                            </Link>
+                        </>
+                    )}
                     <NavLink to="/post-job" className="bg-orange-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-orange-600 mt-4" onClick={toggleMenu}>
                         <FaPlus /> Post New Job
                     </NavLink>
