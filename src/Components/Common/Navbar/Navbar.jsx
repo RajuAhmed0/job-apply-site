@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { FaUnlock, FaUser, FaBars, FaTimes, FaPlus, FaSignOutAlt } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
-
+import { motion } from "motion/react"
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { user, logOut } = useContext(AuthContext)
@@ -30,7 +30,7 @@ const Navbar = () => {
                     {/* Logo Section */}
                     <div className="flex items-center gap-4">
                         <img src="https://i.ibb.co.com/bqcGCWG/logo-removebg-preview.png" alt="logo" className="w-10" />
-                        <h1 className="text-2xl md:text-4xl font-extrabold text-gray-800">Job Nest</h1>
+                        <motion.h1 animate={{ color: ["#fcba03", "#fca503", "#fc8c03", "#ff6c03"] }} transition={{ repeatType: "reverse", easing: "linear", duration: 3, repeat: Infinity, }} className="text-2xl md:text-4xl font-extrabold text-gray-800">Job Nest</motion.h1>
                     </div>
 
                     {/* Mobile Menu Toggle */}

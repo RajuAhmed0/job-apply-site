@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaGoogle, FaArrowRight, FaFileImage } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { useForm } from "react-hook-form";
 import { signInWithPopup } from "firebase/auth";
@@ -23,7 +23,7 @@ const Login = () => {
                 console.log("User Logged In:", userInfo);
                 toast.success("Login successfully!")
                 navigate(location.state ? location.state : "/");
-         
+
             })
             .catch(error => {
                 console.error("Login Error:", error);
@@ -35,12 +35,12 @@ const Login = () => {
                     toast.error("Failed to login. Please check your details.");
                 }
             });
-            
+
     };
 
 
-      //  Google Login
-      const handleGoogleLogin = () => {
+    //  Google Login
+    const handleGoogleLogin = () => {
         signInWithPopup(auth, googleProvider)
             .then(result => {
                 console.log("Google Sign-In Success:", result.user);
@@ -56,10 +56,10 @@ const Login = () => {
     return (
         <div>
             <Toaster position="top-right" />
-            <div className="flex items-center justify-center bg-gray-100 ">
-                <div className="bg-white p-6 my-12 max-w-lg">
+            <div className="flex items-center justify-center bg-gray-100 bg-cover bg-center "   style={{ backgroundImage: "url('https://i.ibb.co.com/GvSk4DWR/login-bg-img.jpg')" }}>
+                <div className="bg-slate-200 p-6 my-12 max-w-lg bg-opacity-10 shadow-lg backdrop-blur-md ">
                     <h2 className="text-3xl font-bold text-orange-500 text-center">Login</h2>
-                    <p className="text-gray-600 text-center mb-8 mt-4">
+                    <p className="text-white text-center mb-8 mt-4">
                         Discover the latest in job with Job Nest. Your go-to source for insights, trends, and internships.
                     </p>
                     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -86,21 +86,21 @@ const Login = () => {
                         </div>
 
 
-                        <button type="submit" className="w-full flex items-center gap-2 justify-center bg-orange-500 text-white py-3  font-semibold hover:bg-orange-600 transition duration-300">
+                        <button type="submit" className="w-full flex items-center gap-2 justify-center bg-orange-300 text-white py-3  font-semibold hover:bg-orange-600 transition duration-300">
                             Login <FaArrowRight />
                         </button>
                     </form>
                     <div className="text-center my-4">OR</div>
                     <div className="flex justify-center space-x-4">
-                        <button  onClick={handleGoogleLogin} className="flex items-center justify-center w-full py-3 border border-gray-300  shadow-md hover:bg-orange-200 transition duration-200">
+                        <button onClick={handleGoogleLogin} className="flex items-center bg-slate-200 justify-center w-full py-3   shadow-md hover:bg-orange-200 transition duration-200">
                             <FcGoogle className="text-xl mr-2" />
-                            <span className="text-gray-700 font-medium">Continue with Google</span>
+                            <span className=" font-medium">Continue with Google</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-
+         
         </div>
     );
 };
