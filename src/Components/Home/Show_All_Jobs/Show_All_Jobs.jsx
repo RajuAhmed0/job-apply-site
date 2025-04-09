@@ -1,6 +1,8 @@
+import { Briefcase } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { FaMapMarkerAlt, FaCalendarAlt, FaEye, FaMoneyBillWave } from 'react-icons/fa';
 import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
+import { Link } from 'react-router-dom';
 
 const Show_All_Jobs = () => {
     const [jobsData, setJobsData] = useState([]);
@@ -9,6 +11,7 @@ const Show_All_Jobs = () => {
     const [max, setMax] = useState(200000);
     const [showSectors, setShowSectors] = useState(true);
     const [showDatePosted, setShowDatePosted] = useState(true);
+    const [selectedJobTypes, setSelectedJobTypes] = useState([]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -21,7 +24,6 @@ const Show_All_Jobs = () => {
             .catch(error => console.error('Error:', error));
     }, []);
 
-    // Filter logic: search + salary
     const filteredJobs = jobsData
         .filter((job) =>
             job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -33,6 +35,9 @@ const Show_All_Jobs = () => {
                 ? job.salaryRange.min
                 : parseInt(job.salaryRange?.replace(/[^\d]/g, '')) || 0;
             return salary >= min && salary <= max;
+        })
+        .filter((job) => {
+            return selectedJobTypes.length === 0 || selectedJobTypes.includes(job.jobType);
         });
 
     return (
@@ -46,7 +51,6 @@ const Show_All_Jobs = () => {
                 </p>
             </div>
 
-            {/* Search Bar */}
             <div className="mb-3 flex max-w-[1200px] xl:mx-auto mx-1 flex-col sm:flex-row items-start sm:items-center justify-between p-2 border shadow-sm">
                 <h2 className="text-lg font-bold text-gray-800 mb-2 sm:mb-0">All Jobs</h2>
                 <div className="w-full sm:w-1/3">
@@ -69,10 +73,7 @@ const Show_All_Jobs = () => {
                 </div>
             </div>
 
-            {/* Main content wrapper */}
             <div className='flex flex-col lg:flex-row gap-4 max-w-[1200px] xl:mx-auto mx-1'>
-
-                {/* Sidebar */}
                 <div className="max-w-sm bg-white p-4 shadow-md space-y-6">
                     {/* Job Type */}
                     <div>
@@ -83,16 +84,27 @@ const Show_All_Jobs = () => {
                             </span>
                         </div>
                         <div className={`transition-all duration-300 overflow-hidden ${showSectors ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'} space-y-1`}>
-                            {["Full-Time", "Part-Time", "Hybrid"].map((sector) => (
-                                <div key={sector} className="flex items-center">
-                                    <input type="checkbox" className="mr-2" />
-                                    <label className="text-sm text-gray-700">{sector}</label>
+                            {["Full-Time", "Part-Time", "Hybrid"].map((type) => (
+                                <div key={type} className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        className="mr-2"
+                                        checked={selectedJobTypes.includes(type)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setSelectedJobTypes(prev => [...prev, type]);
+                                            } else {
+                                                setSelectedJobTypes(prev => prev.filter(item => item !== type));
+                                            }
+                                        }}
+                                    />
+                                    <label className="text-sm text-gray-700">{type}</label>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Experience Level */}
+                    {/* Experience Level (unchanged, not wired yet) */}
                     <div>
                         <div className="flex justify-between items-center cursor-pointer" onClick={() => setShowDatePosted(!showDatePosted)}>
                             <h2 className="text-sm font-bold text-orange-500 uppercase">Experience Level</h2>
@@ -103,14 +115,14 @@ const Show_All_Jobs = () => {
                         <div className={`transition-all duration-300 overflow-hidden ${showDatePosted ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'} space-y-1`}>
                             {["Senior", "Internship", "Entry", "Mid Level", "Junior"].map((level) => (
                                 <div key={level} className="flex items-center">
-                                      <input type="checkbox" className="mr-2 " />
+                                    <input type="checkbox" className="mr-2 " />
                                     <label className="text-sm text-gray-700">{level}</label>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Salary Filter */}
+                    {/* Salary Filter (unchanged) */}
                     <div>
                         <h2 className="text-lg text-orange-500 font-semibold mb-4">Price Range</h2>
                         <div className="relative w-full h-6 mb-4">
@@ -184,7 +196,7 @@ const Show_All_Jobs = () => {
                 </div>
 
                 {/* Job List */}
-                <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 w-full ">
                     {filteredJobs.length > 0 ? (
                         filteredJobs.map((job, index) => (
                             <div key={index} className="w-full mx-auto border md:p-4 p-2 shadow-sm bg-white">
@@ -207,6 +219,9 @@ const Show_All_Jobs = () => {
                                                 {job.applicationDeadline}
                                             </span>
                                         </div>
+                                        <div className="text-gray-500 flex items-center gap-1">
+                                            <Briefcase className="w-4 h-4" /> {job.jobType}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className='border-t mt-6'></div>
@@ -217,9 +232,11 @@ const Show_All_Jobs = () => {
                                             ? `${job.salaryRange.min} – ${job.salaryRange.max}`
                                             : job.salaryRange || 'Negotiable'}
                                     </div>
-                                    <button className="flex items-center gap-1 hover:text-orange-500 text-sm">
-                                        <FaEye /> View
-                                    </button>
+                                    <Link to={`/jobs_details/${job._id}`}>
+                                        <button className="flex items-center gap-1 hover:text-orange-500 text-sm">
+                                            <FaEye /> View
+                                        </button>
+                                    </Link>
                                 </div>
                             </div>
                         ))

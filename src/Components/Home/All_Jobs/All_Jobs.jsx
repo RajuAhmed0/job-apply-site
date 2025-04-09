@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const All_Jobs = () => {
     const [jobsData, setJobsData] = useState([]);
-    console.log(jobsData);
+    // console.log(jobsData);
 
     useEffect(() => {
         fetch('http://localhost:4000/allJobs')
