@@ -6,7 +6,7 @@ import { motion } from "motion/react"
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { user, logOut } = useContext(AuthContext)
-    console.log(user);
+    // console.log(user);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
