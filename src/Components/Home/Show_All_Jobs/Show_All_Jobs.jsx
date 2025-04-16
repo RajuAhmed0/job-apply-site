@@ -12,6 +12,8 @@ const Show_All_Jobs = () => {
     const [showSectors, setShowSectors] = useState(true);
     const [showDatePosted, setShowDatePosted] = useState(true);
     const [selectedJobTypes, setSelectedJobTypes] = useState([]);
+    const [selectedExperienceLevels, setSelectedExperienceLevels] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -20,8 +22,14 @@ const Show_All_Jobs = () => {
     useEffect(() => {
         fetch('http://localhost:4000/allJobs')
             .then(res => res.json())
-            .then(data => setJobsData(data))
-            .catch(error => console.error('Error:', error));
+            .then(data => {
+                setJobsData(data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                setLoading(false);
+            });
     }, []);
 
     const filteredJobs = jobsData
@@ -33,11 +41,14 @@ const Show_All_Jobs = () => {
         .filter((job) => {
             const salary = typeof job.salaryRange === 'object'
                 ? job.salaryRange.min
-                : parseInt(job.salaryRange?.replace(/[^\d]/g, '')) || 0;
+                : Number((job.salaryRange || '').replace(/[^\d]/g, '')) || 0;
             return salary >= min && salary <= max;
         })
         .filter((job) => {
             return selectedJobTypes.length === 0 || selectedJobTypes.includes(job.jobType);
+        })
+        .filter((job) => {
+            return selectedExperienceLevels.length === 0 || selectedExperienceLevels.includes(job.experienceLevel);
         });
 
     return (
@@ -104,7 +115,7 @@ const Show_All_Jobs = () => {
                         </div>
                     </div>
 
-                    {/* Experience Level (unchanged, not wired yet) */}
+                    {/* Experience Level */}
                     <div>
                         <div className="flex justify-between items-center cursor-pointer" onClick={() => setShowDatePosted(!showDatePosted)}>
                             <h2 className="text-sm font-bold text-orange-500 uppercase">Experience Level</h2>
@@ -115,14 +126,25 @@ const Show_All_Jobs = () => {
                         <div className={`transition-all duration-300 overflow-hidden ${showDatePosted ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'} space-y-1`}>
                             {["Senior", "Internship", "Entry", "Mid Level", "Junior"].map((level) => (
                                 <div key={level} className="flex items-center">
-                                    <input type="checkbox" className="mr-2 " />
+                                    <input
+                                        type="checkbox"
+                                        className="mr-2"
+                                        checked={selectedExperienceLevels.includes(level)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setSelectedExperienceLevels(prev => [...prev, level]);
+                                            } else {
+                                                setSelectedExperienceLevels(prev => prev.filter(item => item !== level));
+                                            }
+                                        }}
+                                    />
                                     <label className="text-sm text-gray-700">{level}</label>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Salary Filter (unchanged) */}
+                    {/* Salary Filter */}
                     <div>
                         <h2 className="text-lg text-orange-500 font-semibold mb-4">Price Range</h2>
                         <div className="relative w-full h-6 mb-4">
@@ -179,25 +201,24 @@ const Show_All_Jobs = () => {
                             `}</style>
                         </div>
                         <div className="flex justify-between">
-                            <input
-                                type="text"
-                                value={min.toLocaleString()}
-                                readOnly
-                                className="border border-gray-300 rounded p-2 w-24 text-center"
-                            />
-                            <input
-                                type="text"
-                                value={max.toLocaleString()}
-                                readOnly
-                                className="border border-gray-300 rounded p-2 w-24 text-center"
-                            />
+                            <input type="text" value={min.toLocaleString()} readOnly className="border border-gray-300 rounded p-2 w-24 text-center" />
+                            <input type="text" value={max.toLocaleString()} readOnly className="border border-gray-300 rounded p-2 w-24 text-center" />
                         </div>
                     </div>
                 </div>
 
                 {/* Job List */}
-                <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 w-full ">
-                    {filteredJobs.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                    {loading ? (
+                        [...Array(4)].map((_, i) => (
+                            <div key={i} className="flex flex-col gap-4 w-full p-4 border shadow-sm bg-white animate-pulse">
+                                <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
+                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                                <div className="h-3 bg-gray-200 rounded w-full"></div>
+                            </div>
+                        ))
+                    ) : filteredJobs.length > 0 ? (
                         filteredJobs.map((job, index) => (
                             <div key={index} className="w-full mx-auto border md:p-4 p-2 shadow-sm bg-white">
                                 <div className="flex items-start gap-4">
@@ -205,12 +226,8 @@ const Show_All_Jobs = () => {
                                         <img src={job.company_logo} alt="" className="object-contain w-full h-full" />
                                     </div>
                                     <div className="flex-1">
-                                        <h2 className="text-lg font-bold text-orange-500 flex items-center gap-1">
-                                            {job.title}
-                                        </h2>
-                                        <h3 className="text-sm text-gray-800 font-semibold">
-                                            {job.category}
-                                        </h3>
+                                        <h2 className="text-lg font-bold text-orange-500 flex items-center gap-1">{job.title}</h2>
+                                        <h3 className="text-sm text-gray-800 font-semibold">{job.category}</h3>
                                         <div className="text-gray-500 lg:text-sm text-[10px] flex items-center gap-1 mt-1">
                                             <FaMapMarkerAlt />
                                             {job.location}

@@ -1,9 +1,26 @@
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import React from 'react';
+import toast from 'react-hot-toast';
 
 const Add_Jobs = () => {
+
+    const mutation = useMutation({
+        mutationFn: (data)=> toast.promise(
+           axios.post('http://localhost:4000/allJobs', data),
+           {
+            loading: 'Submitting...',
+            success: 'Submitted successfully!',
+            error: 'Submission failed.',
+          }
+        )
+    })
+
+
     const handleSubmitForm = (e) => {
         e.preventDefault();
         const form = e.target;
+
 
         const addedJobs = {
             title: form.title.value,
@@ -26,20 +43,12 @@ const Add_Jobs = () => {
                 currency: form.currency.value,
             },
         };
-
-        fetch('http://localhost:4000/allJobs', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(addedJobs),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log('Job added:', data);
-                form.reset();
-            })
-            .catch((err) => console.error('Error:', err));
+        mutation.mutate(addedJobs, {
+            onSuccess: () => {
+                form.reset(); 
+            }
+        });
+      
     };
 
     return (

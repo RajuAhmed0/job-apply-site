@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.74.3",
+    "axios": "^1.8.4",
     "firebase": "^11.4.0",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.482.0",

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useLoaderData } from 'react-router-dom'
-import { ArrowLeft, Briefcase, Mail, MapPin, Wallet } from "lucide-react";
+import { ArrowLeft, ArrowRight, Briefcase, Mail, MapPin, Wallet } from "lucide-react";
 
 const Jobs_Details = () => {
     const jobsData = useLoaderData()
@@ -100,7 +100,10 @@ const Jobs_Details = () => {
                                     </p>
                                 </div>
                             </section>
-                            <Link to={"/showAllJobs"}><button className='hover:text-orange-500 flex mt-2'><span>  <ArrowLeft className='w-4' /></span> Back</button></Link>
+                            <div className='flex  justify-between items-center'>
+                                <Link to={"/showAllJobs"}><button className='hover:text-orange-500 flex mt-2'><span>  <ArrowLeft className='w-4' /></span> Back</button></Link>
+                                <Link to={`/jobs_apply/${jobsData._id}`}><button className='hover:text-orange-500 flex mt-2'> Apply <span>  <ArrowRight className='w-4' /></span></button></Link>
+                            </div>
                         </div>
                     </div>
                 </div>
