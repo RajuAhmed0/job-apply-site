@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Briefcase, Mail, MapPin, Wallet } from "lucide-r
 
 const Jobs_Details = () => {
     const jobsData = useLoaderData()
-    console.log(jobsData);
+    // console.log(jobsData);
 
 
     useEffect(() => {
