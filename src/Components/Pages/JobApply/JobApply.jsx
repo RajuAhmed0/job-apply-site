@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { AuthContext } from '../../Provider/AuthProvider';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 
-const JobApply = ({ user, job }) => {
-    const applyData = {
+const JobApply = () => {
+    const { id } = useParams();
+    const { user } = useContext(AuthContext);
+    // console.log(user);
+
+
+    const { data: jobData, isSuccess } = useQuery({
+        queryKey: ['job', id],
+        queryFn: () => axios.get(`http://localhost:4000/allJobs/${id}`),
+    });
+    
+    const appliFormData = {
+            
         career_summary: '', skills: '', experience: '', reason_to_hire: '',
         min_salary: '', max_salary: '', portfolio_link: '',
         linkedin_link: '', resume_link: '',
@@ -14,7 +28,7 @@ const JobApply = ({ user, job }) => {
         }
     };
 
-    const [formData, setFormData] = useState(applyData);
+    const [formData, setFormData] = useState(appliFormData);
 
     const handleChange = ({ target: { name, value, type, checked } }) => {
         if (name in formData.checkboxes) {
@@ -27,22 +41,38 @@ const JobApply = ({ user, job }) => {
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.post('http://localhost:4000/applications', { user, job, application: formData });
-            toast.success('Application submitted successfully!');
-            setFormData(applyData); 
-        } catch (err) {
-            console.error(err);
-            toast.error('Something went wrong. Try again.');
+    const mutation = useMutation({
+        mutationFn: (applicationData) =>
+            toast.promise(
+                axios.post('http://localhost:4000/applications', applicationData),
+                {
+                    loading: 'Submitting...',
+                    success: 'Application submitted successfully!',
+                    error: 'Something went wrong. Try again.',
+                }
+            ),
+        onSuccess: () => {
+            setFormData(appliFormData);
         }
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!user || !isSuccess) return;
+
+        const submission = {
+            user,
+            job: jobData.data,
+            application: formData
+        };
+
+        mutation.mutate(submission);
     };
 
     return (
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl my-10 space-y-6">
             <h2 className="text-2xl font-bold text-orange-500">Job Application Form</h2>
-     
+
             <textarea
                 name="career_summary"
                 rows="4"

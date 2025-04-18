@@ -5,17 +5,17 @@ import axios from "axios";
 const MyApplications = () => {
   const queryClient = useQueryClient();
 
-  // Fetch all applications
+  
   const { data: apps, isLoading, isError } = useQuery({
     queryKey: ['applications'],
     queryFn: () =>
       axios.get('http://localhost:4000/applications').then(res => res.data),
   });
 
-  // Withdraw an application
+
   const mutation = useMutation({
     mutationFn: (id) => {
-      // ✅ FIXED: Send DELETE to the correct URL with ID param
+  
       return axios.delete(`http://localhost:4000/applications/${id}`);
     },
     onSuccess: () => {
