@@ -8,13 +8,18 @@ import Jobs_Details from "../Pages/Jobs_Details/Jobs_Details";
 import Add_Jobs from "../Pages/Add_Jobs/Add_Jobs";
 import JobApply from "../Pages/JobApply/JobApply";
 import MyApplications from "../Pages/MyApplications/MyApplications";
-import MyApplyJobs from "../Pages/JobApply/MyApplyJobs/MyApplyJobs";
+import MyPostedJobs from "../Pages/MyPostedJobs/MyPostedJobs";
+import ErrorPage from "../Pages/ErrorPage/ErrorPage";
+
+
+
 
 
 export const router = createBrowserRouter([
     {
         path: '/',
         element: <MainLayouts></MainLayouts>,
+        errorElement: <ErrorPage></ErrorPage>,
         children: [
             {
                 path: "/",
@@ -54,7 +59,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "/myjobspost",
-                element: <MyApplyJobs></MyApplyJobs>
+                element: <MyPostedJobs></MyPostedJobs>
             
             },
           
