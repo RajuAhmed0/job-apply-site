@@ -6,30 +6,30 @@ import { AuthContext } from '../../Provider/AuthProvider';
 
 const MyPostedJobs = () => {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext); // Assumes user.email is available
+  const { user } = useContext(AuthContext); 
 
-  // Fetch jobs for the logged-in user
+  
   const { data, isLoading, isError } = useQuery({
     queryKey: ['myPostedJobs', user?.email],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:4000/allJobs?email=${user.email}`); // Fixed URL
-      console.log("Fetched jobs:", res.data); // Debugging
+      const res = await axios.get(`http://localhost:4000/allJobs?email=${user.email}`); 
+      console.log("Fetched jobs:", res.data); 
       return Array.isArray(res.data) ? res.data : res.data.jobs || [];
     },
-    enabled: !!user?.email, // Only run if email is present
+    enabled: !!user?.email, 
   });
 
   const jobs = Array.isArray(data) ? data : [];
 
-  // Handle delete job
+
   const onDelete = async (id) => {
     if (confirm('Are you sure you want to delete this job?')) {
       await axios.delete(`http://localhost:4000/allJobs/${id}`);
-      location.reload(); // or use queryClient.invalidateQueries if set up
+      location.reload(); 
     }
   };
 
-  // Loading/Error UI
+ 
   if (isLoading) return <p className="text-center py-10">Loading...</p>;
   if (isError) return <p className="text-center py-10 text-red-500">Failed to load jobs.</p>;
 

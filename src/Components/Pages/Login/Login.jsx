@@ -7,6 +7,7 @@ import { AuthContext } from "../../Provider/AuthProvider";
 import { useForm } from "react-hook-form";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../../Firebase/firebase.config";
+import axios from "axios";
 
 
 const Login = () => {
@@ -19,10 +20,16 @@ const Login = () => {
 
     const onSubmit = (data) => {
         signIn(data.email, data.password)
+
             .then(userInfo => {
                 console.log("User Logged In:", userInfo);
+                axios.post("http://localhost:4000/jwt", { email: data.email }, { withCredentials: true })
+                .then((response) => {
+                  console.log("JWT Token:", response.data.token); 
+                });
+                
                 toast.success("Login successfully!")
-                navigate(location.state ? location.state : "/");
+                // navigate(location.state ? location.state : "/");
 
             })
             .catch(error => {
