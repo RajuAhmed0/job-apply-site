@@ -16,7 +16,7 @@ const MyApplications = () => {
     mutationFn: (id) => axios.delete(`http://localhost:4000/applications/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applications'] });
-      setConfirmId(null); // close modal
+      setConfirmId(null); 
     },
   });
 
