@@ -24,10 +24,10 @@ const Login = () => {
             .then(userInfo => {
                 console.log("User Logged In:", userInfo);
                 axios.post("http://localhost:4000/jwt", { email: data.email }, { withCredentials: true })
-                .then((response) => {
-                  console.log("JWT Token:", response.data.token); 
-                });
-                
+                    .then((response) => {
+                        console.log("JWT Token:", response.data.token);
+                    });
+
                 toast.success("Login successfully!")
                 // navigate(location.state ? location.state : "/");
 
@@ -50,7 +50,13 @@ const Login = () => {
     const handleGoogleLogin = () => {
         signInWithPopup(auth, googleProvider)
             .then(result => {
+                const userEmail = result.user.email;
                 console.log("Google Sign-In Success:", result.user);
+    
+                return axios.post("http://localhost:4000/jwt", { email: userEmail }, { withCredentials: true });
+            })
+            .then(response => {
+                console.log("JWT Token:", response.data.token);
                 toast.success("Google Login Successful!");
                 navigate(location.state ? location.state : "/");
             })
@@ -59,11 +65,12 @@ const Login = () => {
                 toast.error("Google Sign-In Failed.");
             });
     };
+    
 
     return (
         <div>
             <Toaster position="top-right" />
-            <div className="flex items-center justify-center bg-gray-100 bg-cover bg-center "   style={{ backgroundImage: "url('https://i.ibb.co.com/GvSk4DWR/login-bg-img.jpg')" }}>
+            <div className="flex items-center justify-center bg-gray-100 bg-cover bg-center " style={{ backgroundImage: "url('https://i.ibb.co.com/GvSk4DWR/login-bg-img.jpg')" }}>
                 <div className="bg-slate-200 p-6 my-12 max-w-lg bg-opacity-10 shadow-lg backdrop-blur-md ">
                     <h2 className="text-3xl font-bold text-orange-500 text-center">Login</h2>
                     <p className="text-white text-center mb-8 mt-4">
@@ -107,7 +114,7 @@ const Login = () => {
                 </div>
             </div>
 
-         
+
         </div>
     );
 };

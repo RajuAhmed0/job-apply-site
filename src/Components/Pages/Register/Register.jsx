@@ -9,6 +9,7 @@ import { auth, googleProvider } from "../../../Firebase/firebase.config";
 import { signInWithPopup } from "firebase/auth";
 import animationData from "../../../../public/sign up animation.json";
 import Lottie from "lottie-react";
+import axios from "axios";
 
 
 const Register = () => {
@@ -19,33 +20,42 @@ const Register = () => {
     const location = useLocation();
 
 
-
     const onSubmit = (data) => {
         createUser(data.email, data.password)
             .then((userInfo) => {
                 console.log("User created:", userInfo);
-                toast.success("Account created successfully!", { position: "top-right" })
-                profileUpdate(data.name, data.photoURL)
-                    .then(() => {
-                        console.log("Profile updated successfully");
-
-                        navigate(location.state ? location.state : "/")
-                    })
-                    .catch((err) => {
-                        console.error("Profile update error:", err);
-                        toast.error("Profile update failed. Try again.", { position: "top-right" });
-                    });
-
+    
+                // JWT Token Request
+                return axios.post("http://localhost:4000/jwt", { email: data.email }, { withCredentials: true });
+            })
+            .then((response) => {
+                console.log("JWT Token:", response.data.token);
+                toast.success("Account created successfully!", { position: "top-right" });
+    
+                // Update profile
+                return profileUpdate(data.name, data.photoURL);
+            })
+            .then(() => {
+                console.log("Profile updated successfully");
+                navigate(location.state ? location.state : "/");
             })
             .catch((error) => {
                 if (error.code === "auth/email-already-in-use") {
                     toast.error("This email is already registered!", { position: "top-right" });
+                } else if (error.response) {
+                    // JWT server error
+                    toast.error("JWT token generation failed.", { position: "top-right" });
+                    console.error("JWT error:", error);
+                } else if (error.message && error.message.includes("Profile update")) {
+                    toast.error("Profile update failed. Try again.", { position: "top-right" });
+                    console.error("Profile update error:", error);
                 } else {
                     console.error("Registration error:", error);
                     toast.error("Registration failed. Please try again.", { position: "top-right" });
                 }
             });
     };
+    
 
 
 
@@ -53,7 +63,13 @@ const Register = () => {
     const handleGoogleLogin = () => {
         signInWithPopup(auth, googleProvider)
             .then(result => {
+                const userEmail = result.user.email;
                 console.log("Google Sign-In Success:", result.user);
+
+                return axios.post("http://localhost:4000/jwt", { email: userEmail }, { withCredentials: true });
+            })
+            .then(response => {
+                console.log("JWT Token:", response.data.token);
                 toast.success("Google Login Successful!");
                 navigate(location.state ? location.state : "/");
             })
